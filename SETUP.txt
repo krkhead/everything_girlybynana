@@ -24,9 +24,8 @@ Step 3: Generate your admin password hash
   - Save the file
 
 Step 4: Push the database schema (sets up your Neon database tables)
+  - Make sure your .env.local file has the correct DATABASE_URL from Neon
   - In your terminal, type:
-      export DATABASE_URL="postgresql://neondb_owner:npg_XJZRe0ilny4A@ep-spring-leaf-amrarbig-pooler.c-5.us-east-1.aws.neon.tech/neondb?channel_binding=require&sslmode=require"
-  - Press Enter, then type:
       npx drizzle-kit push
   - Press Enter and wait for "Changes applied"
   - You only need to do this once (unless the database schema changes)
