@@ -1,0 +1,22 @@
+
+> everything-girly@0.1.0 dev
+> next dev
+
+  ▲ Next.js 14.2.35
+  - Local:        http://localhost:3001
+  - Environments: .env.local
+
+ ✓ Starting...
+ ✓ Ready in 6.8s
+ ○ Compiling /api/auth/[...nextauth] ...
+ ✓ Compiled /api/auth/[...nextauth] in 3.7s (266 modules)
+ GET /api/auth/csrf 200 in 8142ms
+ POST /api/auth/callback/credentials 200 in 1051ms
+ ○ Compiling /api/upload ...
+ ✓ Compiled /api/upload in 1237ms (419 modules)
+ POST /api/upload 500 in 3203ms
+   Reload env: .env.local
+ ✓ Compiled in 2.5s (203 modules)
+ ✓ Compiled in 1039ms (203 modules)
+   Reload env: .env.local
+ ✓ Compiled in 1409ms (203 modules)

@@ -1,0 +1,121 @@
+EVERYTHING GIRLY BY NANA — SETUP GUIDE
+========================================
+
+FIRST TIME SETUP (do this once)
+---------------------------------
+
+Step 1: Open the project folder in terminal
+  - Open Command Prompt or PowerShell
+  - Type: cd C:\Users\onuor\everything-girly
+  - Press Enter
+
+Step 2: Install dependencies
+  - Type: npm install
+  - Press Enter and wait for it to finish
+
+Step 3: Generate your admin password hash
+  - Type: npm run seed:admin
+  - Press Enter
+  - It will ask you to type a password — choose any password you want (Nana will use this to log in)
+  - Copy the ADMIN_PASSWORD_HASH value it gives you
+  - Open the .env.local file in the project folder
+  - Find the line that says: ADMIN_PASSWORD_HASH=...
+  - Replace everything after the = sign with the hash you just copied
+  - Save the file
+
+Step 4: Push the database schema (sets up your Neon database tables)
+  - In your terminal, type:
+      export DATABASE_URL="postgresql://neondb_owner:npg_XJZRe0ilny4A@ep-spring-leaf-amrarbig-pooler.c-5.us-east-1.aws.neon.tech/neondb?channel_binding=require&sslmode=require"
+  - Press Enter, then type:
+      npx drizzle-kit push
+  - Press Enter and wait for "Changes applied"
+  - You only need to do this once (unless the database schema changes)
+
+
+STARTING THE LOCAL DEV SERVER
+-------------------------------
+
+Every time you want to work on or test the site locally:
+
+Step 1: Open Command Prompt or PowerShell
+Step 2: Navigate to the folder:
+  cd C:\Users\onuor\everything-girly
+
+Step 3: Start the server:
+  npm run dev
+
+Step 4: Wait until you see:
+  ✓ Ready in ...s
+
+Step 5: Open your browser and go to:
+  http://localhost:3000          <- Public site (what customers see)
+  http://localhost:3000/admin    <- Admin panel (redirects to login)
+
+Step 6: Log in at http://localhost:3000/admin/login
+  Email:    najegs24@gmail.com
+  Password: (the one you set in Step 3 of First Time Setup)
+
+
+STOPPING THE SERVER
+--------------------
+In the terminal where npm run dev is running, press:
+  Ctrl + C
+
+
+RESTARTING THE SERVER
+----------------------
+Press Ctrl + C to stop it, then run npm run dev again.
+
+
+DEPLOYING TO VERCEL (making it live on the internet)
+------------------------------------------------------
+
+Step 1: Make sure everything works locally first
+
+Step 2: Push any code changes to GitHub:
+  git add .
+  git commit -m "your message here"
+  git push origin master
+
+Step 3: Go to https://vercel.com/dashboard
+  - Find your project (everything_girlybynana)
+  - It will auto-deploy when you push to GitHub
+
+Step 4: Set environment variables on Vercel (only needed once):
+  - Go to your project on Vercel
+  - Click Settings > Environment Variables
+  - Add each variable from your .env.local file:
+      DATABASE_URL
+      NEXTAUTH_SECRET
+      NEXTAUTH_URL         (set this to your Vercel URL, e.g. https://everything-girly.vercel.app)
+      ADMIN_EMAIL
+      ADMIN_PASSWORD_HASH
+      BLOB_READ_WRITE_TOKEN
+
+
+TROUBLESHOOTING
+----------------
+
+Problem: "Cannot find module" errors
+Fix: Run npm install again
+
+Problem: "No database connection" error
+Fix: Make sure DATABASE_URL is set in .env.local and run the export command before drizzle-kit push
+
+Problem: Login page keeps redirecting
+Fix: Delete your browser cookies for localhost and try again
+
+Problem: Changes not showing on the live site
+Fix: Push to GitHub (git push origin master) — Vercel auto-deploys from GitHub
+
+Problem: Admin page shows blank or error after login
+Fix: Stop the server (Ctrl+C) and run npm run dev again
+
+
+IMPORTANT FILES
+----------------
+.env.local             <- Your secret environment variables (never share this)
+lib/whatsapp.ts        <- WhatsApp number is here (change it if needed)
+components/public/     <- Public website sections (homepage, about, etc.)
+components/admin/      <- Admin panel components
+app/admin/actions.ts   <- Add/edit/delete product logic
