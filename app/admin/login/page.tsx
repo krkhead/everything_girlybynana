@@ -12,21 +12,32 @@ export default function LoginPage() {
     e.preventDefault();
     setLoading(true);
     setError("");
-    const form = e.currentTarget;
-    const email = (form.elements.namedItem("email") as HTMLInputElement).value;
-    const password = (form.elements.namedItem("password") as HTMLInputElement).value;
 
-    const result = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-    });
+    try {
+      const form = e.currentTarget;
+      const email = (form.elements.namedItem("email") as HTMLInputElement).value
+        .trim()
+        .toLowerCase();
+      const password = (form.elements.namedItem("password") as HTMLInputElement).value;
 
-    if (result?.error) {
-      setError("Invalid email or password.");
+      const result = await signIn("credentials", {
+        email,
+        password,
+        redirect: false,
+        callbackUrl: "/admin",
+      });
+
+      if (!result?.ok || result.error) {
+        setError("Invalid email or password.");
+        setLoading(false);
+        return;
+      }
+
+      router.replace(result.url ?? "/admin");
+      router.refresh();
+    } catch {
+      setError("Something went wrong while signing in. Please try again.");
       setLoading(false);
-    } else {
-      router.push("/admin");
     }
   }
 
@@ -69,16 +80,14 @@ export default function LoginPage() {
             />
           </div>
 
-          {error && (
-            <p className="font-sans text-xs text-red-500 text-center">{error}</p>
-          )}
+          {error && <p className="font-sans text-xs text-red-500 text-center">{error}</p>}
 
           <button
             type="submit"
             disabled={loading}
             className="bg-gradient-brand text-white font-sans text-sm font-medium py-3 rounded-full mt-2 hover:shadow-glow transition-all disabled:opacity-60"
           >
-            {loading ? "Signing in…" : "Sign In"}
+            {loading ? "Signing in..." : "Sign In"}
           </button>
         </form>
       </div>

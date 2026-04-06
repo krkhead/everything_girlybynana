@@ -27,7 +27,12 @@ export default function ProductForm({ product, action, submitLabel }: Props) {
     setLoading(true);
     formData.set("imageUrl", imageUrl);
     formData.set("inStock", String(inStock));
-    await action(formData);
+
+    try {
+      await action(formData);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (

@@ -3,6 +3,10 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/lib/auth";
 import { NextResponse } from "next/server";
 
+function sanitizeFileName(fileName: string) {
+  return fileName.replace(/[^a-zA-Z0-9._-]/g, "-");
+}
+
 export async function POST(request: Request) {
   const session = await getServerSession(authOptions);
   if (!session) {
@@ -25,9 +29,25 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "File too large (max 4.5MB)" }, { status: 400 });
   }
 
-  const blob = await put(`products/${Date.now()}-${file.name}`, file, {
-    access: "public",
-  });
+  try {
+    const blob = await put(`products/${Date.now()}-${sanitizeFileName(file.name)}`, file, {
+      access: "public",
+    });
 
-  return NextResponse.json({ url: blob.url });
+    return NextResponse.json({ url: blob.url });
+  } catch (error) {
+    const message = error instanceof Error ? error.message : "Upload failed";
+
+    if (message.includes("Cannot use public access on a private store")) {
+      return NextResponse.json(
+        {
+          error:
+            "Image uploads are blocked because the connected Vercel Blob store is private. Switch the store to public access, or connect a public Blob store for product images.",
+        },
+        { status: 500 }
+      );
+    }
+
+    return NextResponse.json({ error: message }, { status: 500 });
+  }
 }

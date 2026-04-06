@@ -2,7 +2,12 @@ import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 
+function normalizeEmail(value: string) {
+  return value.trim().toLowerCase();
+}
+
 export const authOptions: NextAuthOptions = {
+  secret: process.env.NEXTAUTH_SECRET,
   providers: [
     CredentialsProvider({
       name: "credentials",
@@ -17,12 +22,15 @@ export const authOptions: NextAuthOptions = {
         const adminHash = process.env.ADMIN_PASSWORD_HASH;
 
         if (!adminEmail || !adminHash) return null;
-        if (credentials.email !== adminEmail) return null;
 
+        const submittedEmail = normalizeEmail(credentials.email);
+        const configuredEmail = normalizeEmail(adminEmail);
         const valid = await bcrypt.compare(credentials.password, adminHash);
+
+        if (submittedEmail !== configuredEmail) return null;
         if (!valid) return null;
 
-        return { id: "1", email: adminEmail, name: "Nana" };
+        return { id: "1", email: configuredEmail, name: "Nana" };
       },
     }),
   ],
